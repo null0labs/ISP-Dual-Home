@@ -1,0 +1,121 @@
+hostname ISP-R1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description TO_POP
+ ip address 203.0.113.2 255.255.255.252
+ standby 1 track 1 decrement 60
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description TO_CUSTOMER
+ ip address 198.51.100.2 255.255.255.240
+ standby version 2
+ standby 1 ip 198.51.100.1
+ standby 1 preempt
+ standby 1 authentication md5 key-string password
+ standby 1 track 1 shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+!
+ip sla 1
+ icmp-echo 203.0.113.1 source-ip 203.0.113.2
+ frequency 5
+ip sla schedule 1 life forever start-time now
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec ^C
+^C
+banner incoming ^C
+^C
+banner login ^C
+^C
+!
+line con 0
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+no scheduler allocate
+!
+end
