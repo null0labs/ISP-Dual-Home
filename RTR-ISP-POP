@@ -1,4 +1,13 @@
-hostname ISP-POP
+Current configuration : 1468 bytes
+!
+! Last configuration change at 14:43:12 UTC Fri Jul 11 2025
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ISP-R1
 !
 boot-start-marker
 boot-end-marker
@@ -24,7 +33,6 @@ mmi snmp-timeout 180
 !
 !
 !
-no ip domain lookup
 ip cef
 no ipv6 cef
 !
@@ -52,23 +60,22 @@ track 1 ip sla 1 reachability
 !
 !
 !
-interface Loopback0
- description TEST-POINT
- ip address 1.1.1.1 255.255.255.255
-!
 interface GigabitEthernet0/0
- description TO_CUST-A-R1
- ip address 203.0.113.1 255.255.255.252
+ description TO_POP
+ ip address 203.0.113.2 255.255.255.252
  duplex auto
  speed auto
  media-type rj45
 !
 interface GigabitEthernet0/1
- description TO_CUST-A-R2
- ip address 203.0.113.5 255.255.255.252
+ description ISP-R1-LAN
+ ip address 198.51.100.2 255.255.255.240
  duplex auto
  speed auto
  media-type rj45
+ vrrp 1 ip 198.51.100.1
+ vrrp 1 authentication md5 key-string password
+ vrrp 1 track 1 decrement 60
 !
 interface GigabitEthernet0/2
  no ip address
@@ -89,11 +96,10 @@ ip forward-protocol nd
 !
 no ip http server
 no ip http secure-server
-ip route 198.51.100.0 255.255.255.240 203.0.113.2 track 1
-ip route 198.51.100.0 255.255.255.240 203.0.113.6 200
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
 !
 ip sla 1
- icmp-echo 203.0.113.2 source-ip 203.0.113.1
+ icmp-echo 203.0.113.1 source-ip 203.0.113.2
  frequency 5
 ip sla schedule 1 life forever start-time now
 ipv6 ioam timestamp
@@ -102,12 +108,8 @@ ipv6 ioam timestamp
 !
 control-plane
 !
-banner exec ^C
-^C
-banner incoming ^C
-^C
 banner login ^C
-^C
+Null0Labs Only ^C
 !
 line con 0
 line aux 0
