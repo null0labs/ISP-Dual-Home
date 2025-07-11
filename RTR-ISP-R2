@@ -1,3 +1,12 @@
+Current configuration : 1314 bytes
+!
+! Last configuration change at 14:47:03 UTC Fri Jul 11 2025
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
 hostname ISP-R2
 !
 boot-start-marker
@@ -11,8 +20,7 @@ no aaa new-model
 !
 mmi polling-interval 60
 no mmi auto-configure
- --More--
-*Jul 10 13:43:25.270: %SYS-5-CONFIG_I: Configured from console no mmi pvc
+no mmi pvc
 mmi snmp-timeout 180
 !
 !
@@ -25,7 +33,6 @@ mmi snmp-timeout 180
 !
 !
 !
-no ip domain lookup
 ip cef
 no ipv6 cef
 !
@@ -52,20 +59,21 @@ redundancy
 !
 !
 interface GigabitEthernet0/0
+ description TO_POP
  ip address 203.0.113.6 255.255.255.252
  duplex auto
  speed auto
  media-type rj45
 !
 interface GigabitEthernet0/1
+ description ISP-R2-LAN
  ip address 198.51.100.3 255.255.255.240
- standby version 2
- standby 1 ip 198.51.100.1
- standby 1 priority 50
- standby 1 authentication md5 key-string password
  duplex auto
  speed auto
  media-type rj45
+ vrrp 1 ip 198.51.100.1
+ vrrp 1 priority 50
+ vrrp 1 authentication md5 key-string password
 !
 interface GigabitEthernet0/2
  no ip address
@@ -94,12 +102,8 @@ ipv6 ioam timestamp
 !
 control-plane
 !
-banner exec ^C
-^C
-banner incoming ^C
-^C
 banner login ^C
-^C
+Null0Labs Only ^C
 !
 line con 0
 line aux 0
